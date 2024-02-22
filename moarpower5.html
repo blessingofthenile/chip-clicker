@@ -305,6 +305,28 @@
             cheatMenu.style.display = cheatMenu.style.display === 'none' ? 'block' : 'none';
         }
 
+        function executeCheat() {
+            const cheatOptions = document.getElementById('cheatOptions');
+            const selectedOption = cheatOptions.options[cheatOptions.selectedIndex].value;
+
+            switch (selectedOption) {
+                case 'autoClick':
+                    startAutoClick();
+                    break;
+                case 'autoUpgrades':
+                    // Implement auto-upgrades cheat logic here
+                    break;
+                case 'add100':
+                    earnings += 100;
+                    updateDisplay();
+                    break;
+                case 'add5000Chips':
+                    chipsCount += 5000;
+                    updateDisplay();
+                    break;
+            }
+        }
+
         function startAutoClick() {
             autoClickInterval = setInterval(function () {
                 clickChip();
@@ -362,12 +384,13 @@
     <!-- Cheat Menu -->
     <div id="cheatMenu" style="display: none;">
         <h2>Cheat Menu</h2>
-        <select id="cheatOptions" onchange="executeCheat()">
+        <select id="cheatOptions">
             <option value="autoClick">Auto Click</option>
             <option value="autoUpgrades">Auto Upgrades</option>
             <option value="add100">Add $100</option>
             <option value="add5000Chips">Add 5000 Chips</option>
         </select>
+        <button onclick="executeCheat()">Execute Cheat</button>
     </div>
 </body>
 </html>

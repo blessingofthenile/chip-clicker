@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chip Clicker</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        #content {
+            text-align: center;
+        }
+
+        h1 {
+            color: #4CAF50;
+        }
+
+        #chips {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        #earnings {
+            font-size: 1.5em;
+            color: #ffd700;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <h1>Chip Clicker</h1>
+        <p>Click the chip to earn money!</p>
+        <p id="chips">Chips: 0</p>
+        <p id="earnings">Earnings: $0</p>
+        <button onclick="clickChip()">Click me!</button>
+        <br>
+        <button onclick="buyUpgrade('autoEat')">Buy Auto Chip Eater - $100</button>
+        <button onclick="buyUpgrade('advertising')">Buy Chip Advertising - $500</button>
+        <button onclick="buyUpgrade('workout')">Start Working Out</button>
+        <br>
+        <button onclick="buyUpgrade('cheapUpgrade')">Buy Cheap Upgrade - $10</button>
+        <button onclick="buyUpgrade('fastUpgrade')">Buy Fast Upgrade - $25</button>
+        <!-- Add more upgrades here... -->
+    </div>
+
+    <script>
+        let chipsCount = 0;
+        let earnings = 0;
+        let autoEatEnabled = false;
+        let advertisingEnabled = false;
+        let workoutInterval;
+
+        const upgrades = {
+            'autoEat': { cost: 100, effect: 'auto chip eater', interval: 1000 },
+            'advertising': { cost: 500, effect: 'chip advertising', interval: 5000 },
+            'workout': { cost: 0, effect: 'workout', interval: 3000 },
+            'cheapUpgrade': { cost: 10, effect: 'cheap upgrade', interval: 500 },
+            'fastUpgrade': { cost: 25, effect: 'fast upgrade', interval: 1000 },
+            // Add more upgrades here...
+        };
+
+        function clickChip() {
+            chipsCount++;
+            earnings += chipsCount * 0.1;
+            updateDisplay();
+        }
+
+        function buyUpgrade(upgradeType) {
+            if (upgrades.hasOwnProperty(upgradeType)) {
+                const upgrade = upgrades[upgradeType];
+                if (earnings >= upgrade.cost) {
+                    earnings -= upgrade.cost;
+                    upgrade.cost += Math.floor(upgrade.cost * 0.2); // Increase cost for the next purchase
+                    startUpgrade(upgradeType, upgrade.interval);
+                }
+            }
+
+            updateDisplay();
+        }
+
+        function startUpgrade(upgradeType, interval) {
+            setInterval(function () {
+                if (upgradeType === 'autoEat') {
+                    chipsCount++;
+                } else if (upgradeType === 'advertising') {
+                    earnings += chipsCount * 0.5;
+                } else if (upgradeType === 'workout' && chipsCount > 0) {
+                    chipsCount--;
+                } else {
+                    chipsCount += 2; // Generic upgrade effect for others
+                }
+
+                updateDisplay();
+            }, interval);
+        }
+
+        function updateDisplay() {
+            document.getElementById('chips').innerText = `Chips: ${chipsCount}`;
+            document.getElementById('earnings').innerText = `Earnings: $${earnings.toFixed(2)}`;
+        }
+    </script>
+</body>
+</html>

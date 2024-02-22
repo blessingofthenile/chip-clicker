@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rogue Dungeon Explorer</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rogue Dungeon Explorer</h1>
+    <p>Welcome to the immersive world of adventure!</p>
+
+    <div id="game-container">
+        <p id="output">Explore the towns, interact with characters, embark on quests, and face the challenges!</p>
+        <input type="text" id="input" placeholder="Type your command...">
+        <button onclick="processInput()">Submit</button>
+    </div>
+
+    <script>
+        // ... (Previous code)
+
+        // Extended Game Features
+
+        // Skills System
+        let playerSkills = {
+            combat: 10,
+            magic: 5,
+            stealth: 8,
+            // Add more skills as needed
+        };
+
+        // Advanced Combat System
+        function startCombat(enemy) {
+            // Consider implementing a more detailed combat system
+            // Incorporate playerSkills and enemyStats for a dynamic experience
+            // Include critical hits, dodges, and special abilities
+        }
+
+        // Dynamic Weather System
+        let weatherConditions = ["Sunny", "Rainy", "Snowy", "Stormy"];
+
+        function checkWeather() {
+            const currentWeather = getRandomElement(weatherConditions);
+            return `The weather is ${currentWeather}.`;
+        }
+
+        // Day-Night Cycle
+        let timeOfDay = "Day";
+
+        function updateTime() {
+            timeOfDay = (timeOfDay === "Day") ? "Night" : "Day";
+            return `It's now ${timeOfDay}.`;
+        }
+
+        // Dynamic Events
+        function triggerRandomEvent() {
+            const randomEvent = getRandomElement(["Bandit Attack", "Epic Treasure Find", "Mysterious Portal"]);
+            return `You encounter a ${randomEvent}!`;
+        }
+
+        // ... (Previous functions)
+
+        // Update processInput function
+        function processInput() {
+            const inputElement = document.getElementById("input");
+            const outputElement = document.getElementById("output");
+            const inputValue = inputElement.value.toLowerCase();
+
+            let outputText;
+
+            if (inputValue === "explore") {
+                outputText = exploreTown() + "\n" + checkWeather() + "\n" + updateTime() + "\n" + triggerRandomEvent();
+            } else if (inputValue === "quest") {
+                outputText = startQuest();
+            } else if (inputValue === "complete") {
+                outputText = completeQuest();
+            } else if (inputValue === "town") {
+                outputText = changeTown();
+            } else if (inputValue === "story") {
+                outputText = progressStoryline();
+            } else if (inputValue === "character") {
+                outputText = interactWithCharacter();
+            } else if (inputValue === "trade") {
+                outputText = tradeWithCharacter();
+            } else if (inputValue === "combat") {
+                // Introduce a combat scenario
+                outputText = startCombat("Giant Spider");
+            } else {
+                outputText = "Invalid command. Type 'explore' to roam the town, 'quest' to start a quest, 'complete' to finish a quest, 'town' to change location, 'story' to progress in the storyline, 'character' to interact with unique characters, 'trade' to trade with a character, or 'combat' to engage in battle.";
+            }
+
+            outputElement.innerText = outputText;
+            inputElement.value = "";
+        }
+    </script>
+</body>
+</html>

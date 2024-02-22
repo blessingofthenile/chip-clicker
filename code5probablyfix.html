@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chip Clicker</title>
+    <style>
+        /* Styles remain unchanged for simplicity */
+        body {
+            background-color: #1a1a1a;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        #content {
+            text-align: center;
+        }
+
+        h1 {
+            color: #4CAF50;
+        }
+
+        #chips {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        #earnings {
+            font-size: 1.5em;
+            color: #ffd700;
+        }
+
+        #rent {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <h1 id="cheatToggle" onclick="toggleCheatMenu()">Chip Clicker</h1>
+        <p>Click the chip to earn money!</p>
+        <p id="chips">Chips: 0</p>
+        <p id="earnings">Earnings: $0</p>
+        <p id="rent">Rent: $1000</p>
+        <button onclick="clickChip()">Click me!</button>
+        <br>
+        <button onclick="buyUpgrade('autoEat')">Buy Auto Chip Eater - $100</button>
+        <button onclick="buyUpgrade('advertising')">Buy Chip Advertising - $500</button>
+        <button onclick="toggleWorkout()">Toggle Working Out</button>
+        <br>
+        <button onclick="playBlackjack()">Play Blackjack - $200</button>
+        <button onclick="spinWheel()">Spin the Wheel - $100</button>
+        <br>
+        <button onclick="buyUpgrade('drinks')">Buy Drinks - $1000</button>
+        <button onclick="buyUpgrade('fans')">Buy Fans - $5000</button>
+        <button onclick="buyUpgrade('apotheosis')">Buy Apotheosis of Snack - $30000</button>
+        <br>
+        <button onclick="rebirth()">Rebirth - $500000</button>
+    </div>
+
+    <script>
+        let chipsCount = 0;
+        let earnings = 0;
+        let autoEatEnabled = false;
+        let advertisingEnabled = false;
+        let workoutInterval;
+        let rent = 1000;
+        let cheatMode = false;
+        let autoClickInterval;
+        let productConsumers = 0;
+        let drinksUpgrade = 0;
+        let fansUpgrade = 0;
+        let apotheosisUpgrade = 0;
+        let rebirthCost = 500000;
+        let rebirthMultiplier = 10;
+
+        function clickChip() {
+            if (cheatMode) {
+                chipsCount++;
+                updateDisplay();
+            } else {
+                // Normal clicking logic
+                chipsCount++;
+                earnings += chipsCount * 0.1;
+                checkGameConditions();
+                updateDisplay();
+            }
+        }
+
+        function buyUpgrade(upgradeType) {
+            let cost = getUpgradeCost(upgradeType);
+
+            if (earnings >= cost) {
+                earnings -= cost;
+
+                switch (upgradeType) {
+                    case 'autoEat':
+                        autoEatEnabled = true;
+                        startAutoEat();
+                        break;
+                    case 'advertising':
+                        advertisingEnabled = true;
+                        startAdvertising();
+                        break;
+                    case 'drinks':
+                        drinksUpgrade++;
+                        break;
+                    case 'fans':
+                        fansUpgrade++;
+                        break;
+                    case 'apotheosis':
+                        apotheosisUpgrade++;
+                        break;
+                }
+
+                updateDisplay();
+            } else {
+                alert("Not enough money to buy this upgrade!");
+            }
+        }
+
+        function startAutoEat() {
+            setInterval(function () {
+                if (autoEatEnabled) {
+                    chipsCount++;
+                    checkGameConditions();
+                    updateDisplay();
+                }
+            }, 1000);
+        }
+
+        function startAdvertising() {
+            setInterval(function () {
+                if (advertisingEnabled) {
+                    earnings += chipsCount * 0.5;
+                    checkGameConditions();
+                    updateDisplay();
+                }
+            }, 5000);
+        }
+
+        function startWorkingOut() {
+            workoutInterval = setInterval(function () {
+                if (chipsCount > 0) {
+                    chipsCount--;
+                    checkGameConditions();
+                    updateDisplay();
+                }
+            }, 3000);
+        }
+
+        function toggleWorkout() {
+            if (workoutInterval) {
+                clearInterval(workoutInterval);
+                workoutInterval = null;
+            } else {
+                startWorkingOut();
+            }
+        }
+
+        function playBlackjack() {
+            let bet = 200;
+            let playerHand = getRandomCard() + getRandomCard();
+            let dealerHand = getRandomCard() + getRandomCard();
+
+            let message = `Your hand: ${playerHand}\nDealer's hand: ${dealerHand}\n`;
+
+            if (playerHand === 21) {
+                message += "Blackjack! You win!";
+                chipsCount += bet;
+            } else if (dealerHand === 21) {
+                message += "Dealer has Blackjack! You lose.";
+                chipsCount -= bet;
+            } else {
+                while (confirm(message + "Do you want another card?")) {
+                    playerHand += getRandomCard();
+                    message = `Your hand: ${playerHand}\nDealer's hand: ${dealerHand}\n`;
+
+                    if (playerHand > 21) {
+                        message += "Bust! You lose.";
+                        chipsCount -= bet;
+                        break;
+                    }
+                }
+
+                while (dealerHand < 17) {
+                    dealerHand += getRandomCard();
+                }
+
+                message = `Your hand: ${playerHand}\nDealer's hand: ${dealerHand}\n`;
+
+                if (dealerHand > 21 || playerHand > dealerHand) {
+                    message += "You win!";
+                    chipsCount += bet;
+                } else if (playerHand === dealerHand) {
+                    message += "It's a tie!";
+                } else {
+                    message += "You lose.";
+                    chipsCount -= bet;
+                }
+            }
+
+            checkGameConditions();
+            updateDisplay();
+        }
+
+        function spinWheel() {
+            let cost = 100;
+            let outcome = Math.floor(Math.random() * 20) + 1;
+
+            if (outcome % 2 === 1) {
+                earnings += 1000; // Adjusted for negatives
+            } else {
+                if (chipsCount >= 0) {
+                    chipsCount /= 2;
+                } else {
+                    chipsCount = Math.max(chipsCount * 0.5 - 500, -10000);
+                }
+            }
+
+            chipsCount += outcome % 2 === 1 ? 1.5 : -1;
+            earnings += cost * (outcome % 2 === 1 ? 1.5 : -0.5);
+
+            checkGameConditions();
+            updateDisplay();
+        }
+
+        function buyUpgrade(upgradeType) {
+            let cost = getUpgradeCost(upgradeType);
+
+            if (earnings >= cost) {
+                earnings -= cost;
+
+                switch (upgradeType) {
+                    case 'autoEat':
+                        autoEatEnabled = true;
+                        startAutoEat();
+                        break;
+                    case 'advertising':
+                        advertisingEnabled = true;
+                        startAdvertising();
+                        break;
+                    case 'drinks':
+                        drinksUpgrade++;
+                        break;
+                    case 'fans':
+                        fansUpgrade++;
+                        break;
+                    case 'apotheosis':
+                        apotheosisUpgrade++;
+                        break;
+                }
+
+                updateDisplay();
+            } else {
+                alert("Not enough money to buy this upgrade!");
+            }
+        }
+
+        function getUpgradeCost(upgradeType) {
+            switch (upgradeType) {
+                case 'autoEat':
+                    return 100;
+                case 'advertising':
+                    return 500;
+                case 'drinks':
+                    return 1000 * Math.pow(1.15, drinksUpgrade);
+                case 'fans':
+                    return 5000 * Math.pow(2, fansUpgrade);
+                case 'apotheosis':
+                    return 30000 * Math.pow(1.5, apotheosisUpgrade);
+                default:
+                    return 0;
+            }
+        }
+
+        function getRandomCard() {
+            return Math.floor(Math.random() * 10) + 1;
+        }
+
+        function toggleCheatMenu() {
+            const cheatMenu = document.getElementById('cheatMenu');
+            cheatMenu.style.display = cheatMenu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function executeCheat() {
+            const cheatOptions = document.getElementById('cheatOptions');
+            const selectedOption = cheatOptions.options[cheatOptions.selectedIndex].value;
+
+            switch (selectedOption) {
+                case 'autoClick':
+                    startAutoClick();
+                    break;
+                case 'autoUpgrades':
+                    // Implement auto-upgrades cheat logic here
+                    break;
+                case 'add100':
+                    earnings += 100;
+                    updateDisplay();
+                    break;
+                case 'add5000Chips':
+                    chipsCount += 5000;
+                    updateDisplay();
+                    break;
+            }
+        }
+
+        function startAutoClick() {
+            autoClickInterval = setInterval(function () {
+                clickChip();
+            }, 0.01);
+        }
+
+        function stopAutoClick() {
+            clearInterval(autoClickInterval);
+        }
+
+        function updateDisplay() {
+            document.getElementById('chips').innerText = `Chips: ${chipsCount.toFixed(2)}`;
+            document.getElementById('earnings').innerText = `Earnings: $${earnings.toFixed(2)}`;
+            document.getElementById('rent').innerText = `Rent: $${rent}`;
+            document.getElementById('productConsumers').innerText = `Product Consumers: ${productConsumers}`;
+            document.getElementById('drinksUpgrade').innerText = `Drinks Upgrade: ${drinksUpgrade}`;
+            document.getElementById('fansUpgrade').innerText = `Fans Upgrade: ${fansUpgrade}`;
+            document.getElementById('apotheosisUpgrade').innerText = `Apotheosis Upgrade: ${apotheosisUpgrade}`;
+        }
+
+        function rebirth() {
+            if (earnings >= rebirthCost) {
+                earnings = 0;
+                chipsCount = 0;
+                rent *= 2;
+                rebirthCost *= rebirthMultiplier;
+                autoEatEnabled = false;
+                advertisingEnabled = false;
+                productConsumers = 0;
+                drinksUpgrade = 0;
+                fansUpgrade = 0;
+                apotheosisUpgrade = 0;
+
+                // Increase ALL income and chip-eating by x3
+                earnings *= 3;
+                chipsCount *= 3;
+                rent *= 3;
+
+                // Add more and more upgrades
+                rebirthMultiplier += 10;
+                for (let i = 0; i < 20; i++) {
+                    buyUpgrade('newUpgrade' + i);
+                }
+
+                updateDisplay();
+            } else {
+                alert("Not enough money to rebirth!");
+            }
+        }
+
+        // Initial display update
+        updateDisplay();
+    </script>
+
+    <!-- Cheat Menu -->
+    <div id="cheatMenu" style="display: none;">
+        <h2>Cheat Menu</h2>
+        <select id="cheatOptions">
+            <option value="autoClick">Auto Click</option>
+            <option value="autoUpgrades">Auto Upgrades</option>
+            <option value="add100">Add $100</option>
+            <option value="add5000Chips">Add 5000 Chips</option>
+        </select>
+        <button onclick="executeCheat()">Execute Cheat</button>
+    </div>
+</body>
+</html>

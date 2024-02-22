@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chip Clicker</title>
+    <style>
+        /* Styles remain unchanged for simplicity */
+        body {
+            background-color: #1a1a1a;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        #content {
+            text-align: center;
+        }
+
+        h1 {
+            color: #4CAF50;
+        }
+
+        #chips {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        #earnings {
+            font-size: 1.5em;
+            color: #ffd700;
+        }
+
+        #rent {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <h1 id="cheatToggle" onclick="toggleCheatMenu()">Chip Clicker</h1>
+        <p>Click the chip to earn money!</p>
+        <p id="chips">Chips: 0</p>
+        <p id="earnings">Earnings: $0</p>
+        <p id="rent">Rent: $1000</p>
+        <button onclick="clickChip()">Click me!</button>
+        <br>
+        <button onclick="buyUpgrade('autoEat')">Buy Auto Chip Eater - $100</button>
+        <button onclick="buyUpgrade('advertising')">Buy Chip Advertising - $500</button>
+        <button onclick="toggleWorkout()">Toggle Working Out</button>
+        <br>
+        <button onclick="gamble('blackjack')">Play Blackjack - $200</button>
+        <button onclick="gamble('wheel')">Spin the Wheel - $100</button>
+    </div>
+
+    <script>
+        let chipsCount = 0;
+        let earnings = 0;
+        let autoEatEnabled = false;
+        let advertisingEnabled = false;
+        let workoutInterval;
+        let rent = 1000;
+        let cheatMode = false;
+        let autoClickInterval;
+
+        function clickChip() {
+            if (cheatMode) {
+                chipsCount++;
+                updateDisplay();
+            } else {
+                // Normal clicking logic
+                chipsCount++;
+                earnings += chipsCount * 0.1;
+                checkGameConditions();
+                updateDisplay();
+            }
+        }
+
+        function buyUpgrade(upgradeType) {
+            // Remaining code for upgrades remains unchanged
+            // ...
+
+            checkGameConditions();
+            updateDisplay();
+        }
+
+        function startAutoEat() {
+            setInterval(function () {
+                if (autoEatEnabled) {
+                    chipsCount++;
+                    checkGameConditions();
+                    updateDisplay();
+                }
+            }, 1000);
+        }
+
+        function startAdvertising() {
+            setInterval(function () {
+                if (advertisingEnabled) {
+                    earnings += chipsCount * 0.5;
+                    checkGameConditions();
+                    updateDisplay();
+                }
+            }, 5000);
+        }
+
+        function startWorkingOut() {
+            workoutInterval = setInterval(function () {
+                if (chipsCount > 0) {
+                    chipsCount--;
+                    checkGameConditions();
+                    updateDisplay();
+                }
+            }, 3000);
+        }
+
+        function toggleWorkout() {
+            if (workoutInterval) {
+                clearInterval(workoutInterval);
+                workoutInterval = null;
+            } else {
+                startWorkingOut();
+            }
+        }
+
+        function gamble(gameType) {
+            let cost, outcome;
+            if (gameType === 'blackjack') {
+                cost = 200;
+                outcome = Math.random() < 0.5 ? 1 : -1;
+            } else if (gameType === 'wheel') {
+                cost = 100;
+                outcome = Math.random() < 0.7 ? 1 : -1;
+            }
+
+            chipsCount += outcome;
+            earnings += cost * outcome;
+            checkGameConditions();
+            updateDisplay();
+        }
+
+        function toggleCheatMenu() {
+            cheatMode = !cheatMode;
+
+            if (cheatMode) {
+                alert("Cheat Mode Enabled: Super Fast AutoClick!");
+                startAutoClick();
+            } else {
+                alert("Cheat Mode Disabled");
+                stopAutoClick();
+            }
+        }
+
+        function startAutoClick() {
+            autoClickInterval = setInterval(function () {
+                clickChip();
+            }, 0.01);
+        }
+
+        function stopAutoClick() {
+            clearInterval(autoClickInterval);
+        }
+
+        function checkGameConditions() {
+            if (chipsCount < -10000 || chipsCount > 10000) {
+                alert("Game Over! You ate too many or lost too many chips. Restart the game.");
+                resetGame();
+            }
+
+            if (earnings >= rent) {
+                alert("Congratulations! You earned enough to pay the rent. You win!");
+                resetGame();
+            }
+        }
+
+        function resetGame() {
+            chipsCount = 0;
+            earnings = 0;
+            autoEatEnabled = false;
+            advertisingEnabled = false;
+            rent = 1000;
+            cheatMode = false;
+
+            clearInterval(workoutInterval);
+            workoutInterval = null;
+
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById('chips').innerText = `Chips: ${chipsCount}`;
+            document.getElementById('earnings').innerText = `Earnings: $${earnings.toFixed(2)}`;
+            document.getElementById('rent').innerText = `Rent: $${rent}`;
+        }
+    </script>
+</body>
+</html>

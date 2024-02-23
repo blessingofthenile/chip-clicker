@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WPM Test</title>
+    <style>
+        #text-container {
+            margin: 20px 0;
+            font-size: 18px;
+        }
+
+        #input-box {
+            font-size: 16px;
+            padding: 5px;
+            margin-top: 10px;
+        }
+
+        #result {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="text-container">
+        <p id="text-to-type">This is a simple WPM test. Type the following text:</p>
+        <p id="text-output"></p>
+    </div>
+    <textarea id="input-box" rows="4" cols="50" placeholder="Start typing here..."></textarea>
+    <div id="result"></div>
+
+    <script>
+        const textToType = "This is a simple WPM test. Type the following text:";
+        const textOutputElement = document.getElementById("text-output");
+        const inputBox = document.getElementById("input-box");
+        const resultElement = document.getElementById("result");
+        let startTime, endTime;
+
+        function generateRandomText() {
+            let randomText = "";
+            const characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            for (let i = 0; i < 50; i++) {
+                randomText += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return randomText;
+        }
+
+        function startTest() {
+            textOutputElement.textContent = generateRandomText();
+            inputBox.value = "";
+            inputBox.focus();
+            startTime = new Date();
+        }
+
+        function endTest() {
+            endTime = new Date();
+            const totalTimeInSeconds = (endTime - startTime) / 1000;
+            const totalWordsTyped = inputBox.value.split(" ").length;
+            const wpm = Math.round((totalWordsTyped / totalTimeInSeconds) * 60);
+
+            resultElement.textContent = `Your WPM: ${wpm}`;
+        }
+
+        inputBox.addEventListener("input", function () {
+            if (inputBox.value === textOutputElement.textContent) {
+                endTest();
+            }
+        });
+
+        startTest();
+    </script>
+</body>
+</html>
